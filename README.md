@@ -281,4 +281,5 @@ For support and questions:
 - [ ] Recurring expenses
 - [ ] Expense approval workflow
 - [ ] Integration with payment platforms #   r o o m m a t e - e x p e n s e - s p l i t t e r  
+ #   r o o m m a t e - e x p e n s e - s p l i t t e r  
  
