@@ -75,9 +75,15 @@ export const AuthProvider = ({ children }) => {
       if (state.token) {
         try {
           const response = await axios.get('/api/auth/me');
+          const userData = response.data || {};
+          const normalizedUser = {
+            ...userData,
+            id: userData.id || userData._id,
+            _id: userData._id || userData.id
+          };
           dispatch({
             type: 'AUTH_SUCCESS',
-            payload: { user: response.data, token: state.token }
+            payload: { user: normalizedUser, token: state.token }
           });
         } catch (error) {
           dispatch({ type: 'AUTH_FAIL', payload: 'Token expired' });
@@ -94,9 +100,13 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     try {
       const response = await axios.post('/api/auth/register', userData);
+      const { user, token } = response.data || {};
+      const normalizedUser = user
+        ? { ...user, id: user.id || user._id, _id: user._id || user.id }
+        : null;
       dispatch({
         type: 'AUTH_SUCCESS',
-        payload: response.data
+        payload: { user: normalizedUser, token }
       });
       return { success: true };
     } catch (error) {
@@ -110,9 +120,13 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     try {
       const response = await axios.post('/api/auth/login', credentials);
+      const { user, token } = response.data || {};
+      const normalizedUser = user
+        ? { ...user, id: user.id || user._id, _id: user._id || user.id }
+        : null;
       dispatch({
         type: 'AUTH_SUCCESS',
-        payload: response.data
+        payload: { user: normalizedUser, token }
       });
       return { success: true };
     } catch (error) {

@@ -110,7 +110,8 @@ test-app.js
 TROUBLESHOOTING.md
 install.bat
 
-# Deployment files (keep these)
-# deploy.sh
+# Deployment files (removed for local-only use)
+# vercel.json
 # deploy.bat
+# deploy.sh
 # DEPLOYMENT_GUIDE.md 

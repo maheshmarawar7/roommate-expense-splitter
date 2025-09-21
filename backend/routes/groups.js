@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Group = require('../models/Group');
 const User = require('../models/User');
+const Expense = require('../models/Expense');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -117,7 +118,21 @@ router.get('/', auth, async (req, res) => {
       ]
     });
 
-    res.json(user.groups);
+    // Compute total expenses per group and attach as a property
+    const groupsWithTotals = await Promise.all(
+      user.groups.map(async (groupDoc) => {
+        const totals = await Expense.aggregate([
+          { $match: { groupId: groupDoc._id } },
+          { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+        const totalExpenses = totals.length > 0 ? totals[0].total : 0;
+        const groupObj = groupDoc.toObject();
+        groupObj.totalExpenses = totalExpenses;
+        return groupObj;
+      })
+    );
+
+    res.json(groupsWithTotals);
   } catch (error) {
     console.error('Get groups error:', error);
     res.status(500).json({ message: 'Server error getting groups' });

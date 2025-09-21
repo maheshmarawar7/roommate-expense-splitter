@@ -14,6 +14,8 @@ import {
   TrendingUp,
   User
 } from 'lucide-react';
+import PayNowButton from '../payments/PayNowButton';
+import PaymentHistory from '../payments/PaymentHistory';
 import dayjs from 'dayjs';
 
 // Helper function to format currency in Rupees
@@ -249,6 +251,9 @@ const GroupDetail = () => {
           >
             My Personal View
           </Link>
+          <div className="border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+            Payment History
+          </div>
         </nav>
       </div>
 
@@ -497,6 +502,27 @@ const GroupDetail = () => {
                     <span className="text-lg font-semibold text-gray-900">
                       {formatRupees(expense.amount)}
                     </span>
+                    
+                    {/* Pay Now Button for each member's share */}
+                    {expense.splits.map(split => {
+                      if (split.userId._id === user._id && !split.isPaid) {
+                        return (
+                          <PayNowButton
+                            key={split.userId._id}
+                            expense={expense}
+                            groupId={groupId}
+                            amount={split.amount}
+                            onPaymentSuccess={(paymentData) => {
+                              console.log('Payment successful:', paymentData);
+                              // Refresh data after payment
+                              fetchGroupData();
+                            }}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
+                    
                     {expense.paidByUserId._id === user._id && (
                       <Button
                         variant="outline"
@@ -601,6 +627,9 @@ const GroupDetail = () => {
           </div>
         </div>
       )}
+
+      {/* Payment History */}
+      <PaymentHistory groupId={groupId} />
     </div>
   );
 };

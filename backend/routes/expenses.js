@@ -132,7 +132,7 @@ router.get('/balances/:groupId', auth, async (req, res) => {
     const balances = {};
     group.members.forEach(member => {
       balances[member.user._id] = {
-        userId: member.user._id,
+        userId: member.user._id.toString(),
         name: member.user.name,
         totalPaid: 0,
         totalOwed: 0,
@@ -148,7 +148,9 @@ router.get('/balances/:groupId', auth, async (req, res) => {
       // Each member owes their share of the expense
       expense.splits.forEach(split => {
         const userId = split.userId.toString();
-        balances[userId].totalOwed += split.amount;
+        if (!split.isPaid) {
+          balances[userId].totalOwed += split.amount;
+        }
       });
     });
 
@@ -159,8 +161,14 @@ router.get('/balances/:groupId', auth, async (req, res) => {
 
     // Generate settlement suggestions
     const settlements = [];
-    const positiveBalances = Object.values(balances).filter(b => b.netBalance > 0).sort((a, b) => b.netBalance - a.netBalance);
-    const negativeBalances = Object.values(balances).filter(b => b.netBalance < 0).sort((a, b) => a.netBalance - b.netBalance);
+    const positiveBalances = Object.values(balances)
+      .filter(b => b.netBalance > 0)
+      .map(b => ({ ...b }))
+      .sort((a, b) => b.netBalance - a.netBalance);
+    const negativeBalances = Object.values(balances)
+      .filter(b => b.netBalance < 0)
+      .map(b => ({ ...b }))
+      .sort((a, b) => a.netBalance - b.netBalance);
 
     let i = 0, j = 0;
     while (i < positiveBalances.length && j < negativeBalances.length) {

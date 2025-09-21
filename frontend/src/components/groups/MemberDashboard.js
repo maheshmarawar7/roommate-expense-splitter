@@ -11,6 +11,8 @@ import {
   CreditCard,
   Receipt
 } from 'lucide-react';
+import PayNowButton from '../payments/PayNowButton';
+import PaymentHistory from '../payments/PaymentHistory';
 import dayjs from 'dayjs';
 
 // Helper function to format currency in Rupees
@@ -66,7 +68,7 @@ const MemberDashboard = () => {
   }, [loading, groupId, fetchMemberData]);
 
   const getCurrentUserId = () => {
-    return user?.id;
+    return user?.id || user?._id;
   };
 
   const getPersonalExpenses = () => {
@@ -143,6 +145,13 @@ const MemberDashboard = () => {
             onClick={() => setActiveTab('settlements')}
           >
             Settlements
+          </Button>
+          <Button
+            variant={activeTab === 'payments' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveTab('payments')}
+          >
+            Payment History
           </Button>
         </div>
       </div>
@@ -361,6 +370,18 @@ const MemberDashboard = () => {
                       <div className="text-sm text-red-600">
                         Unpaid
                       </div>
+                      <div className="mt-2">
+                        <PayNowButton
+                          expense={expense}
+                          groupId={groupId}
+                          amount={expense.amount / expense.splits.length}
+                          onPaymentSuccess={(paymentData) => {
+                            console.log('Payment successful:', paymentData);
+                            // Refresh data after payment
+                            fetchMemberData();
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -374,6 +395,10 @@ const MemberDashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {activeTab === 'payments' && (
+        <PaymentHistory groupId={groupId} />
       )}
     </div>
   );

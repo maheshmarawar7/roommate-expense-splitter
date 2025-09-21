@@ -8,16 +8,22 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.5.0",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dayjs": "^1.11.7",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "express-validator": "^7.0.1",
-    "dayjs": "^1.11.9"
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "razorpay": "^2.9.6"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  }
-} 
+  "keywords": [
+    "express",
+    "mongodb",
+    "jwt",
+    "expense-splitter"
+  ],
+  "author": "",
+  "license": "MIT"
+}
